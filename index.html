@@ -29,20 +29,12 @@
     <!-- 统计鸟 -->
     <script type="text/javascript" src="//api.tongjiniao.com/c?_=802202363016777728" async></script>
 
-    <!-- 使用 type="module" 支持 ESM 导入 -->
-    <script type="module">
-        // 导入 markdown-it（ESM 格式）
-        import markdownit from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm';
-
+    <!-- 引入 marked UMD 版本（无需 type="module"） -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+    
+    <script>
         // 页面加载完成后执行
         window.onload = function () {
-            // 创建 markdown-it 实例（可添加配置，如开启代码高亮等）
-            const md = markdownit({
-                html: true,       // 允许解析 HTML 标签
-                breaks: true,     // 允许换行符转换为 <br>
-                linkify: true     // 自动识别链接并转换
-            });
-
             // 加载并渲染 index.md
             fetch('/index.md')
                 .then(response => {
@@ -52,8 +44,8 @@
                     return response.text();
                 })
                 .then(markdownText => {
-                    // 将 Markdown 转换为 HTML
-                    const html = md.render(markdownText);
+                    // 使用 marked 解析 Markdown（默认支持 GFM，与 GitHub 风格匹配）
+                    const html = marked.parse(markdownText);
                     // 插入到页面中
                     document.getElementById('markdown-content').innerHTML = html;
                 })
