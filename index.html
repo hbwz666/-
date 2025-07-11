@@ -4,32 +4,15 @@
 <head>
     <meta charset='utf-8'>
     <title>工作进行中</title>
-    <!-- 引入 GitHub Markdown CSS 样式 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css">
-    <style>
-        .markdown-body {
-            box-sizing: border-box;
-            min-width: 200px;
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 45px;
-        }
-
-        @media (max-width: 767px) {
-            .markdown-body {
-                padding: 15px;
-            }
-        }
-    </style>
 </head>
 
 <body>
     <!-- 用于显示渲染后的 Markdown 内容 -->
-    <div id="markdown-content" class="markdown-body"></div>
+    <div id="markdown-content"></div>
     <!-- 统计鸟 -->
     <script type="text/javascript" src="//api.tongjiniao.com/c?_=802202363016777728" async></script>
 
-    <!-- 引入 marked UMD 版本（无需 type="module"） -->
+    <!-- 引入 marked UMD 版本 -->
     <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
     
     <script>
@@ -44,7 +27,7 @@
                     return response.text();
                 })
                 .then(markdownText => {
-                    // 使用 marked 解析 Markdown（默认支持 GFM，与 GitHub 风格匹配）
+                    // 使用 marked 解析 Markdown
                     const html = marked.parse(markdownText);
                     // 插入到页面中
                     document.getElementById('markdown-content').innerHTML = html;
