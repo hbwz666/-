@@ -1,11 +1,67 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+    <meta charset='utf-8'>
     <title>工作进行中</title>
+    <!-- 引入 GitHub Markdown CSS 样式 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css">
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <h1 align="center">工作正在进行中</h1>
-    
+    <!-- 用于显示渲染后的 Markdown 内容 -->
+    <div id="markdown-content" class="markdown-body"></div>
+    <!-- 统计鸟 -->
     <script type="text/javascript" src="//api.tongjiniao.com/c?_=802202363016777728" async></script>
+
+    <!-- 使用 type="module" 支持 ESM 导入 -->
+    <script type="module">
+        // 导入 markdown-it（ESM 格式）
+        import markdownit from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm';
+
+        // 页面加载完成后执行
+        window.onload = function () {
+            // 创建 markdown-it 实例（可添加配置，如开启代码高亮等）
+            const md = markdownit({
+                html: true,       // 允许解析 HTML 标签
+                breaks: true,     // 允许换行符转换为 <br>
+                linkify: true     // 自动识别链接并转换
+            });
+
+            // 加载并渲染 index.md
+            fetch('/index.md')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('网络响应异常');
+                    }
+                    return response.text();
+                })
+                .then(markdownText => {
+                    // 将 Markdown 转换为 HTML
+                    const html = md.render(markdownText);
+                    // 插入到页面中
+                    document.getElementById('markdown-content').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('加载 Markdown 文件时出错:', error);
+                });
+        };
+    </script>
 </body>
+
 </html>
