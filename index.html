@@ -4,10 +4,20 @@
   <meta charset="utf-8">
   <title>My 导航</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Markdown 解析 -->
   <script src="lib/marked.umd.js"></script>
   <link rel="stylesheet" href="lib/github-markdown.css">
+  
+  <!-- highlight.js代码高亮库 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+
+  <!-- 统计鸟 -->
   <script type="text/javascript" src="//api.tongjiniao.com/c?_=802202363016777728" async></script>
 </head>
+
 <body id="content" class="markdown-body" style="max-width: 1000px;margin: 0 auto;padding: 0 15px;">
   <script>
     // 读取 index.md 内容并转换为 HTML
@@ -16,6 +26,9 @@
       .then(markdown => {
         // 将 Markdown 转换为 HTML 并插入页面
         document.getElementById('content').innerHTML = marked.parse(markdown);
+        
+        // 语法高亮
+        document.querySelectorAll('pre code').forEach(code => hljs.highlightElement(code));
       });
   </script>
 </body>
