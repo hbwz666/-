@@ -60,13 +60,35 @@
       }
       return 'index.md';
     }
+    // 代码复制按钮
+    function addCopyButtons() {
+      document.querySelectorAll('pre code').forEach((codeBlock) => {
+        const pre = codeBlock.parentElement;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.innerText = '⎘';
+        button.style.position = 'absolute';
+        button.style.top = '8px';
+        button.style.right = '8px';
+        button.style.border = 'none';
+        button.style.backgroundColor = 'transparent';
+        button.style.cursor = 'pointer';
+        button.style.fontSize = '20px';
+        button.style.padding = '4px 8px';
+        pre.style.position = 'relative';
+        pre.appendChild(button);
+        button.addEventListener('click', () => {
+          navigator.clipboard.writeText(codeBlock.textContent);
+        });
+      });
+    }
 
     // 处理站内.md链接，自动添加?前缀
     function handleMdLinks() {
       document.querySelectorAll('a').forEach(link => {
         const linkUrl = new URL(link.href);
         const currentUrl = new URL(window.location.href);
-        
+
         // 保留完整路径，直接使用pathname
         if (linkUrl.origin === currentUrl.origin && linkUrl.pathname.endsWith('.md')) {
           link.addEventListener('click', (e) => {
@@ -90,7 +112,7 @@
         })
         .then(markdown => {
           document.getElementById('content').innerHTML = marked.parse(markdown);
-          
+
           // 语法高亮
           document.querySelectorAll('pre code').forEach(code => hljs.highlightElement(code));
 
@@ -106,6 +128,9 @@
 
           // 渲染 KaTeX 数学公式
           renderMathInElement(document.body, katexConfig);
+
+          // 添加复制按钮
+          addCopyButtons();
 
           // 处理链接
           handleMdLinks();
