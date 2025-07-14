@@ -8,19 +8,22 @@
 
   <!-- Markdown 解析 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/16.0.0/lib/marked.umd.min.js"></script>
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css">
 
   <!-- highlight.js 语法高亮库 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css"
-    media="(prefers-color-scheme: light)">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css"
-    media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css" media="(prefers-color-scheme: light)">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
 
   <!-- Mermaid 流程图库 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.8.1/mermaid.min.js"></script>
+
+  <!-- KaTeX 数学公式渲染 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/mathtex-script-type.min.js"></script>
 
   <!-- 统计鸟 -->
   <script type="text/javascript" src="//api.tongjiniao.com/c?_=802202363016777728" async></script>
@@ -30,9 +33,20 @@
   <script>
     // 配置 mermaid
     mermaid.initialize({
-      startOnLoad: false, // 禁用自动渲染
-      theme: 'default',   // 设置主题，可选项：default, forest, dark, neutral
+      startOnLoad: false,
+      theme: 'default',
     });
+
+    // 配置 KaTeX
+    const katexConfig = {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false},
+        {left: "\\[", right: "\\]", display: true}
+      ],
+      throwOnError: false
+    };
 
     // 读取 index.md 内容并转换为 HTML
     fetch('index.md')
@@ -50,15 +64,12 @@
           const container = document.createElement('div');
           container.className = 'mermaid';
           container.textContent = el.textContent;
-
-          // 替换代码块为 mermaid 容器
           pre.parentNode.replaceChild(container, pre);
         });
+        mermaid.run({ querySelector: '.mermaid' });
 
-        // 执行 mermaid 渲染
-        mermaid.run({
-          querySelector: '.mermaid'
-        });
+        // 渲染 KaTeX 数学公式
+        renderMathInElement(document.body, katexConfig);
       });
   </script>
 </body>
