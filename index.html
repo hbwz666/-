@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <title>My 导航</title>
@@ -7,13 +8,19 @@
 
   <!-- Markdown 解析 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/16.0.0/lib/marked.umd.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css">
-  
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css">
+
   <!-- highlight.js 语法高亮库 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css" media="(prefers-color-scheme: light)">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css"
+    media="(prefers-color-scheme: light)">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css"
+    media="(prefers-color-scheme: dark)">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+
+  <!-- Mermaid 流程图库 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.8.1/mermaid.min.js"></script>
 
   <!-- 统计鸟 -->
   <script type="text/javascript" src="//api.tongjiniao.com/c?_=802202363016777728" async></script>
@@ -21,16 +28,39 @@
 
 <body id="content" class="markdown-body" style="max-width: 1000px;margin: 0 auto;padding: 0 15px;">
   <script>
+    // 配置 mermaid
+    mermaid.initialize({
+      startOnLoad: false, // 禁用自动渲染
+      theme: 'default',   // 设置主题，可选项：default, forest, dark, neutral
+    });
+
     // 读取 index.md 内容并转换为 HTML
     fetch('index.md')
       .then(response => response.text())
       .then(markdown => {
         // 将 Markdown 转换为 HTML 并插入页面
         document.getElementById('content').innerHTML = marked.parse(markdown);
-        
+
         // 语法高亮
         document.querySelectorAll('pre code').forEach(code => hljs.highlightElement(code));
+
+        // 渲染 mermaid 图表
+        document.querySelectorAll('pre code.language-mermaid').forEach(el => {
+          const pre = el.parentElement;
+          const container = document.createElement('div');
+          container.className = 'mermaid';
+          container.textContent = el.textContent;
+
+          // 替换代码块为 mermaid 容器
+          pre.parentNode.replaceChild(container, pre);
+        });
+
+        // 执行 mermaid 渲染
+        mermaid.run({
+          querySelector: '.mermaid'
+        });
       });
   </script>
 </body>
+
 </html>
