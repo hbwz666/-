@@ -132,18 +132,3 @@ B --> C{决策}
 C -->|一| D[结果 1]
 C -->|二| E[结果 2]
 ```
-
-水：$H_2O$  
-反应式：$$CaCO_3 + 2HCl \rightarrow CaCl_2 + H_2O + CO_2\uparrow$$
-
-- 行内公式：$E=mc^2$  
-- 块级公式：  
-  $$
-  F = G\frac{m_1m_2}{r^2} \quad \text{（万有引力定律）}
-  $$
-  $$
-  \nabla \cdot \mathbf{E} = \frac{\rho}{\epsilon_0} \quad \text{（高斯定律）}
-  $$
-  $$
-  \Delta x \cdot \Delta p \geq \frac{h}{4\pi} \quad \text{（不确定性原理）}
-  $$

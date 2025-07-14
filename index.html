@@ -52,21 +52,35 @@
 
     // 获取md文件路径（支持 ?filename.md 格式）
     function getMdFilePath() {
-      // 从URL中提取查询字符串部分（? 后面的内容）
       const queryString = window.location.search;
-
       if (queryString.startsWith('?')) {
-        // 移除开头的 ?，获取纯参数部分
         const paramPart = queryString.substring(1);
-
-        // 检查是否有 .md 扩展名
         if (paramPart.endsWith('.md')) {
           return paramPart;
         }
       }
-
-      // 如果格式不符合要求，默认使用 index.md
       return 'index.md';
+    }
+
+    // 处理站内.md链接，自动添加?前缀
+    function handleMdLinks() {
+      document.querySelectorAll('a').forEach(link => {
+        try {
+          const linkUrl = new URL(link.href);
+          const currentUrl = new URL(window.location.href);
+          
+          // 保留完整路径，直接使用pathname
+          if (linkUrl.origin === currentUrl.origin && linkUrl.pathname.endsWith('.md')) {
+            link.addEventListener('click', (e) => {
+              e.preventDefault();
+              // 使用完整路径（如/docs/test.md → ?/docs/test.md）
+              window.location.href = `?${linkUrl.pathname}`;
+            });
+          }
+        } catch (err) {
+          console.log('无效链接:', link.href, err);
+        }
+      });
     }
 
     // 加载并渲染Markdown文件
@@ -80,9 +94,8 @@
           return response.text();
         })
         .then(markdown => {
-          // 将 Markdown 转换为 HTML 并插入页面
           document.getElementById('content').innerHTML = marked.parse(markdown);
-
+          
           // 语法高亮
           document.querySelectorAll('pre code').forEach(code => hljs.highlightElement(code));
 
@@ -98,14 +111,16 @@
 
           // 渲染 KaTeX 数学公式
           renderMathInElement(document.body, katexConfig);
+
+          // 处理链接
+          handleMdLinks();
         })
         .catch(error => {
           document.getElementById('content').innerHTML = `<div class="error">${error.message}</div>`;
         });
     }
 
-    // 当DOM加载完成后执行
-    document.addEventListener('DOMContentLoaded', loadMarkdown);
+    loadMarkdown();
   </script>
 </body>
 
