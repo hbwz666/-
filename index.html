@@ -65,20 +65,16 @@
     // 处理站内.md链接，自动添加?前缀
     function handleMdLinks() {
       document.querySelectorAll('a').forEach(link => {
-        try {
-          const linkUrl = new URL(link.href);
-          const currentUrl = new URL(window.location.href);
-          
-          // 保留完整路径，直接使用pathname
-          if (linkUrl.origin === currentUrl.origin && linkUrl.pathname.endsWith('.md')) {
-            link.addEventListener('click', (e) => {
-              e.preventDefault();
-              // 使用完整路径（如/docs/test.md → ?/docs/test.md）
-              window.location.href = `?${linkUrl.pathname}`;
-            });
-          }
-        } catch (err) {
-          console.log('无效链接:', link.href, err);
+        const linkUrl = new URL(link.href);
+        const currentUrl = new URL(window.location.href);
+        
+        // 保留完整路径，直接使用pathname
+        if (linkUrl.origin === currentUrl.origin && linkUrl.pathname.endsWith('.md')) {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            // 使用完整路径（如/docs/test.md → ?/docs/test.md）
+            window.location.href = `?${linkUrl.pathname}`;
+          });
         }
       });
     }
