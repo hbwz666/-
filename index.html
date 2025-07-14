@@ -50,29 +50,62 @@
       throwOnError: false
     };
 
-    // 读取 index.md 内容并转换为 HTML
-    fetch('index.md')
-      .then(response => response.text())
-      .then(markdown => {
-        // 将 Markdown 转换为 HTML 并插入页面
-        document.getElementById('content').innerHTML = marked.parse(markdown);
+    // 获取md文件路径（支持 ?filename.md 格式）
+    function getMdFilePath() {
+      // 从URL中提取查询字符串部分（? 后面的内容）
+      const queryString = window.location.search;
 
-        // 语法高亮
-        document.querySelectorAll('pre code').forEach(code => hljs.highlightElement(code));
+      if (queryString.startsWith('?')) {
+        // 移除开头的 ?，获取纯参数部分
+        const paramPart = queryString.substring(1);
 
-        // 渲染 mermaid 图表
-        document.querySelectorAll('pre code.language-mermaid').forEach(el => {
-          const pre = el.parentElement;
-          const container = document.createElement('div');
-          container.className = 'mermaid';
-          container.textContent = el.textContent;
-          pre.parentNode.replaceChild(container, pre);
+        // 检查是否有 .md 扩展名
+        if (paramPart.endsWith('.md')) {
+          return paramPart;
+        }
+      }
+
+      // 如果格式不符合要求，默认使用 index.md
+      return 'index.md';
+    }
+
+    // 加载并渲染Markdown文件
+    function loadMarkdown() {
+      const filePath = getMdFilePath();
+      fetch(filePath)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`无法加载文件: ${filePath}`);
+          }
+          return response.text();
+        })
+        .then(markdown => {
+          // 将 Markdown 转换为 HTML 并插入页面
+          document.getElementById('content').innerHTML = marked.parse(markdown);
+
+          // 语法高亮
+          document.querySelectorAll('pre code').forEach(code => hljs.highlightElement(code));
+
+          // 渲染 mermaid 图表
+          document.querySelectorAll('pre code.language-mermaid').forEach(el => {
+            const pre = el.parentElement;
+            const container = document.createElement('div');
+            container.className = 'mermaid';
+            container.textContent = el.textContent;
+            pre.parentNode.replaceChild(container, pre);
+          });
+          mermaid.run({ querySelector: '.mermaid' });
+
+          // 渲染 KaTeX 数学公式
+          renderMathInElement(document.body, katexConfig);
+        })
+        .catch(error => {
+          document.getElementById('content').innerHTML = `<div class="error">${error.message}</div>`;
         });
-        mermaid.run({ querySelector: '.mermaid' });
+    }
 
-        // 渲染 KaTeX 数学公式
-        renderMathInElement(document.body, katexConfig);
-      });
+    // 当DOM加载完成后执行
+    document.addEventListener('DOMContentLoaded', loadMarkdown);
   </script>
 </body>
 
