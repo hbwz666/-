@@ -122,12 +122,25 @@
             const script = document.createElement('script');
             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.8.1/mermaid.min.js';
             script.onload = () => {
+              // 保存原始代码块（用于重新渲染）
+              const originalBlocks = Array.from(document.querySelectorAll('pre code.language-mermaid'))
+                .map(block => ({
+                  el: block.parentElement, // 保存pre容器
+                  content: block.textContent // 保存原始内容
+                }));
+
               // 获取当前主题
               const getTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default';
 
               // 渲染函数
               const render = () => {
-                // 直接渲染所有 mermaid 代码块
+                // 1. 彻底清除所有现有图表
+                document.querySelectorAll('.mermaid').forEach(el => el.remove());
+                // 2. 恢复原始代码块（避免被mermaid替换后丢失）
+                originalBlocks.forEach(({ el, content }) => {
+                  el.innerHTML = `<code class="language-mermaid">${content}</code>`;
+                });
+                // 3. 应用新主题并渲染
                 mermaid.initialize({
                   startOnLoad: false,
                   theme: getTheme()
