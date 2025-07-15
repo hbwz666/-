@@ -54,23 +54,24 @@
 
     // 代码复制按钮
     function addCopyButtons() {
-      document.querySelectorAll('pre code').forEach((codeBlock) => {
+      document.querySelectorAll('pre code').forEach(codeBlock => {
         const pre = codeBlock.parentElement;
         const button = document.createElement('button');
         button.type = 'button';
         button.innerText = '⎘';
-        button.style.position = 'absolute';
-        button.style.top = '8px';
-        button.style.right = '8px';
-        button.style.border = 'none';
-        button.style.backgroundColor = 'transparent';
-        button.style.cursor = 'pointer';
-        button.style.fontSize = '20px';
-        button.style.padding = '4px 8px';
+        button.style.cssText = 'position:absolute;top:8px;right:8px;border:none;background:transparent;cursor:pointer;font-size:20px;padding:4px 8px';
         pre.style.position = 'relative';
         pre.appendChild(button);
+
         button.addEventListener('click', () => {
-          navigator.clipboard.writeText(codeBlock.textContent);
+          const text = codeBlock.textContent;
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.cssText = 'position:fixed;opacity:0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
         });
       });
     }
