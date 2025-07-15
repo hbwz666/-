@@ -19,9 +19,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
 
-  <!-- Mermaid 流程图库 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.8.1/mermaid.min.js"></script>
-
   <!-- KaTeX 数学公式渲染 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
@@ -33,12 +30,6 @@
 
 <body id="content" class="markdown-body" style="max-width: 1000px;margin: 0 auto;padding: 0 15px;">
   <script>
-    // 配置 mermaid
-    mermaid.initialize({
-      startOnLoad: false,
-      theme: 'default',
-    });
-
     // 配置 KaTeX
     const katexConfig = {
       delimiters: [
@@ -60,6 +51,7 @@
       }
       return 'index.md';
     }
+
     // 代码复制按钮
     function addCopyButtons() {
       document.querySelectorAll('pre code').forEach((codeBlock) => {
@@ -116,16 +108,6 @@
           // 语法高亮
           document.querySelectorAll('pre code').forEach(code => hljs.highlightElement(code));
 
-          // 渲染 mermaid 图表
-          document.querySelectorAll('pre code.language-mermaid').forEach(el => {
-            const pre = el.parentElement;
-            const container = document.createElement('div');
-            container.className = 'mermaid';
-            container.textContent = el.textContent;
-            pre.parentNode.replaceChild(container, pre);
-          });
-          mermaid.run({ querySelector: '.mermaid' });
-
           // 渲染 KaTeX 数学公式
           renderMathInElement(document.body, katexConfig);
 
@@ -134,6 +116,45 @@
 
           // 处理链接
           handleMdLinks();
+          // 检查页面内容并实时切换主题（彻底清除旧实例）
+          if (document.body.innerHTML.includes('language-mermaid')) {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.8.1/mermaid.min.js';
+            script.onload = () => {
+              // 保存原始代码块（用于重新渲染）
+              const originalBlocks = Array.from(document.querySelectorAll('pre code.language-mermaid'))
+                .map(block => ({
+                  el: block.parentElement, // 保存pre容器
+                  content: block.textContent // 保存原始内容
+                }));
+
+              // 获取当前主题
+              const getTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default';
+
+              // 渲染函数
+              const render = () => {
+                // 1. 彻底清除所有现有图表
+                document.querySelectorAll('.mermaid').forEach(el => el.remove());
+                // 2. 恢复原始代码块（避免被mermaid替换后丢失）
+                originalBlocks.forEach(({ el, content }) => {
+                  el.innerHTML = `<code class="language-mermaid">${content}</code>`;
+                });
+                // 3. 应用新主题并渲染
+                mermaid.initialize({
+                  startOnLoad: false,
+                  theme: getTheme()
+                });
+                mermaid.run({ querySelector: 'pre code.language-mermaid' });
+              };
+
+              // 首次渲染
+              render();
+
+              // 监听主题变化
+              window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
+            };
+            document.body.appendChild(script);
+          }
         })
         .catch(error => {
           document.getElementById('content').innerHTML = `<div class="error">${error.message}</div>`;
