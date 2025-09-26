@@ -80,7 +80,7 @@
             elements.forEach(el => {
                 // 移除所有动画类
                 el.classList.remove(...el.classList);
-                // 强制触发重绘
+                // 强制触发重绘.
                 void el.offsetWidth;
                 // 根据原来的元素类型重新添加动画类
                 if(el.tagName === 'H1') el.classList.add('animate__animated', 'animate__fadeInDown');
