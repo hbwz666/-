@@ -1,169 +1,95 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <title>My 导航</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animate.css 多动画示例</title>
+    
+    <!-- Animate.css CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            color: #333;
+        }
 
-  <!-- Markdown 解析 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/16.0.0/lib/marked.umd.min.js"></script>
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css">
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
 
-  <!-- highlight.js 语法高亮库 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css"
-    media="(prefers-color-scheme: light)">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css"
-    media="(prefers-color-scheme: dark)">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+        p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 10px auto;
+        }
 
-  <!-- KaTeX 数学公式渲染 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            background-color: #ff7f50;
+            color: white;
+            transition: background 0.3s;
+        }
 
-  <!-- 统计鸟 -->
-  <script type="text/javascript" src="//api.tongjiniao.com/c?_=802202363016777728" async></script>
+        button:hover {
+            background-color: #ff6347;
+        }
+
+        img {
+            width: 200px;
+            margin: 30px 0;
+            border-radius: 12px;
+        }
+
+        .section {
+            margin: 40px 0;
+        }
+    </style>
 </head>
+<body>
 
-<body id="content" class="markdown-body" style="max-width: 1000px;margin: 0 auto;padding: 0 15px;">
-  <script>
-    // 配置 KaTeX
-    const katexConfig = {
-      delimiters: [
-        { left: "$$", right: "$$", display: true },
-        { left: "$", right: "$", display: false },
-        { left: "\\(", right: "\\)", display: false },
-        { left: "\\[", right: "\\]", display: true }
-      ]
-    };
+    <h1 class="animate__animated animate__fadeInDown">欢迎来到动画演示页！</h1>
+    
+    <div class="section">
+        <p class="animate__animated animate__fadeInLeft">这是一个示例段落，可以展示文字动画效果，让网页更生动有趣。</p>
+    </div>
 
-    // 获取md文件路径（支持 ?filename.md 格式）
-    function getMdFilePath() {
-      const queryString = window.location.search;
-      if (queryString.startsWith('?')) {
-        const paramPart = queryString.substring(1);
-        if (paramPart.endsWith('.md')) {
-          return paramPart;
-        }
-      }
-      return 'index.md';
-    }
+    <div class="section">
+        <img src="media/img/123.jpg" alt="示例图片" class="animate__animated animate__zoomIn">
+    </div>
 
-    // 代码复制按钮
-    function addCopyButtons() {
-      document.querySelectorAll('pre code').forEach(codeBlock => {
-        const pre = codeBlock.parentElement;
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.innerText = '⎘';
-        button.style.cssText = 'position:absolute;top:8px;right:8px;border:none;background:transparent;cursor:pointer;font-size:20px;padding:4px 8px';
-        pre.style.position = 'relative';
-        pre.appendChild(button);
+    <div class="section">
+        <p class="animate__animated animate__fadeInRight">你可以点击下面的按钮，让动画再次播放。</p>
+        <button id="animateBtn">再次播放动画</button>
+    </div>
 
-        button.addEventListener('click', () => {
-          const text = codeBlock.textContent;
-          const textarea = document.createElement('textarea');
-          textarea.value = text;
-          textarea.style.cssText = 'position:fixed;opacity:0';
-          document.body.appendChild(textarea);
-          textarea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textarea);
+    <script>
+        const btn = document.getElementById('animateBtn');
+
+        btn.addEventListener('click', () => {
+            const elements = document.querySelectorAll('.animate__animated');
+            elements.forEach(el => {
+                // 移除所有动画类
+                el.classList.remove(...el.classList);
+                // 强制触发重绘
+                void el.offsetWidth;
+                // 根据原来的元素类型重新添加动画类
+                if(el.tagName === 'H1') el.classList.add('animate__animated', 'animate__fadeInDown');
+                else if(el.tagName === 'P' && el.parentElement.classList.contains('section') && el.previousElementSibling == null) el.classList.add('animate__animated', 'animate__fadeInLeft');
+                else if(el.tagName === 'IMG') el.classList.add('animate__animated', 'animate__zoomIn');
+                else el.classList.add('animate__animated', 'animate__fadeInRight');
+            });
         });
-      });
-    }
+    </script>
 
-    // 处理站内.md链接，自动添加?前缀
-    function handleMdLinks() {
-      document.querySelectorAll('a').forEach(link => {
-        const linkUrl = new URL(link.href);
-        const currentUrl = new URL(window.location.href);
-
-        // 保留完整路径，直接使用pathname
-        if (linkUrl.origin === currentUrl.origin && linkUrl.pathname.endsWith('.md')) {
-          link.addEventListener('click', (e) => {
-            e.preventDefault();
-            // 使用完整路径（如/docs/test.md → ?/docs/test.md）
-            window.location.href = `?${linkUrl.pathname}`;
-          });
-        }
-      });
-    }
-
-    // 加载并渲染Markdown文件
-    function loadMarkdown() {
-      const filePath = getMdFilePath();
-      fetch(filePath)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`无法加载文件: ${filePath}`);
-          }
-          return response.text();
-        })
-        .then(markdown => {
-          document.getElementById('content').innerHTML = marked.parse(markdown);
-
-          // 语法高亮
-          document.querySelectorAll('pre code').forEach(code => hljs.highlightElement(code));
-
-          // 渲染 KaTeX 数学公式
-          renderMathInElement(document.body, katexConfig);
-
-          // 添加复制按钮
-          addCopyButtons();
-
-          // 处理链接
-          handleMdLinks();
-          // 检查页面内容并实时切换主题（彻底清除旧实例）
-          if (document.body.innerHTML.includes('language-mermaid')) {
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.8.1/mermaid.min.js';
-            script.onload = () => {
-              // 保存原始代码块（用于重新渲染）
-              const originalBlocks = Array.from(document.querySelectorAll('pre code.language-mermaid'))
-                .map(block => ({
-                  el: block.parentElement, // 保存pre容器
-                  content: block.textContent // 保存原始内容
-                }));
-
-              // 获取当前主题
-              const getTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default';
-
-              // 渲染函数
-              const render = () => {
-                // 1. 彻底清除所有现有图表
-                document.querySelectorAll('.mermaid').forEach(el => el.remove());
-                // 2. 恢复原始代码块（避免被mermaid替换后丢失）
-                originalBlocks.forEach(({ el, content }) => {
-                  el.innerHTML = `<code class="language-mermaid">${content}</code>`;
-                });
-                // 3. 应用新主题并渲染
-                mermaid.initialize({
-                  startOnLoad: false,
-                  theme: getTheme()
-                });
-                mermaid.run({ querySelector: 'pre code.language-mermaid' });
-              };
-
-              // 首次渲染
-              render();
-
-              // 监听主题变化
-              window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
-            };
-            document.body.appendChild(script);
-          }
-        })
-        .catch(error => {
-          document.getElementById('content').innerHTML = `<div class="error">${error.message}</div>`;
-        });
-    }
-
-    loadMarkdown();
-  </script>
 </body>
-
 </html>
